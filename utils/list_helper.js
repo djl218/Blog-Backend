@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const dummy = (array) => {
     return 1
 }
@@ -19,18 +21,36 @@ const favoriteBlog = (array) => {
             : max
     }
     
-    const reducedToMostLikedBlog = array.reduce(reducer, 0)
+    const { author, title, likes } = array.reduce(reducer, 0)
+        return { author, title, likes }
+}
 
-    const desiredFormat = new Object()
-        desiredFormat.title = reducedToMostLikedBlog.title
-        desiredFormat.author = reducedToMostLikedBlog.author
-        desiredFormat.likes = reducedToMostLikedBlog.likes
+const mostBlogs = (array) => {
+    const topAuthorAndNumberOfBlogs =
+        _.chain(array)
+        .map('author')
+        .flatten()
+        .countBy()
+        .entries()
+        .maxBy(_.last)
+        .value()
+
+    const desiredFormat = {
+        "author": topAuthorAndNumberOfBlogs[0],
+        "blogs": topAuthorAndNumberOfBlogs[1]
+    }
 
     return desiredFormat
+}
+
+const mostLikes = (array) => {
+    
 }
 
 module.exports = {
     dummy,
     totalLikes,
-    favoriteBlog
+    favoriteBlog,
+    mostBlogs,
+    mostLikes
 }
