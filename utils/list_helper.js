@@ -12,7 +12,25 @@ const totalLikes = (array) => {
         : array.reduce(reducer, 0)
 }
 
+const favoriteBlog = (array) => {
+    const reducer = (max, item) => {
+        return !max || item.likes > max.likes
+            ? item
+            : max
+    }
+    
+    const reducedToMostLikedBlog = array.reduce(reducer, 0)
+
+    const desiredFormat = new Object()
+        desiredFormat.title = reducedToMostLikedBlog.title
+        desiredFormat.author = reducedToMostLikedBlog.author
+        desiredFormat.likes = reducedToMostLikedBlog.likes
+
+    return desiredFormat
+}
+
 module.exports = {
     dummy,
-    totalLikes
+    totalLikes,
+    favoriteBlog
 }
