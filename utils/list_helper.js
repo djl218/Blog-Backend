@@ -21,8 +21,8 @@ const favoriteBlog = (array) => {
             : max
     }
     
-    const { author, title, likes } = array.reduce(reducer, 0)
-        return { author, title, likes }
+    const { title, author, likes } = array.reduce(reducer, 0)
+        return { title, author, likes }
 }
 
 const mostBlogs = (array) => {
@@ -44,7 +44,17 @@ const mostBlogs = (array) => {
 }
 
 const mostLikes = (array) => {
-    
+    const authorWithMostLikes = 
+    _.chain(array)
+    .groupBy('author')
+    .map((objects, key) => ({
+        'author': key,
+        'likes': _.sumBy(objects, 'likes')
+    }))
+    .maxBy('likes')
+    .value()
+
+    return authorWithMostLikes
 }
 
 module.exports = {
