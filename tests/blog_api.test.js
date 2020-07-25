@@ -29,6 +29,35 @@ test('all blogs are returned', async () => {
     expect(response.body.length).toBe(helper.initialBlogs.length)
 })
 
+test('blogs are identified by "id" not "_id"', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const ids = blogsAtStart.map(r => r.id)
+
+    expect(ids).toBeDefined()
+})
+
+test('a new blog can be added', async () => {
+    const newBlog = {
+        title: 'David Walsh Blog',
+        author: 'David Walsh'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+
+    const title = blogsAtEnd.map(n => n.title)
+    expect(title).toContain(
+        'David Walsh Blog'
+    )
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
