@@ -40,7 +40,8 @@ test('blogs are identified by "id" not "_id"', async () => {
 test('a new blog can be added', async () => {
     const newBlog = {
         title: 'David Walsh Blog',
-        author: 'David Walsh'
+        author: 'David Walsh',
+        url: 'https://davidwalsh.name/'
     }
 
     await api
@@ -64,6 +65,21 @@ test('if the likes property is missing, a default value of zero will be assigned
     return blogsAtStart.likes === undefined
         ? blogsAtStart.likes = 0
         : blogsAtStart
+})
+
+test('a new blog needs a title and url for it to be added to list', async () => {
+    const newBlog = {
+        author: 'David Walsh'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
 })
 
 afterAll(() => {
