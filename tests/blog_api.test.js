@@ -58,6 +58,14 @@ test('a new blog can be added', async () => {
     )
 })
 
+test('if the likes property is missing, a default value of zero will be assigned', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    return blogsAtStart.likes === undefined
+        ? blogsAtStart.likes = 0
+        : blogsAtStart
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
