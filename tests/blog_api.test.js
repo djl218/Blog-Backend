@@ -82,6 +82,25 @@ test('a new blog needs a title and url for it to be added to list', async () => 
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
 })
 
+test('if blog has valid id, it can be deleted, response will be status code 204', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length - 1
+    )
+
+    const ids = blogsAtEnd.map(r => r.id)
+
+    expect(ids).not.toContain(blogToDelete.id)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
