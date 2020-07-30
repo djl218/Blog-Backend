@@ -52,6 +52,30 @@ const initialBlogs = [
     }
 ]
 
+const initialUsers = [
+    {
+        _id: "5f1dc5518912bb3bf9283aa0",
+        username: "dleskosky",
+        name: "Daniel Leskosky",
+        passwordHash: "$2b$10$gwT8yfZikHv6gSijUIHWle8U4tN2743p2SlPJ4mEMqBI4psjk4Goq",
+        __v: 3   
+    },
+    {
+        _id: "5f1dc5f38912bb3bf9283aa1",
+        username: "redDog14",
+        name: "Sophie",
+        passwordHash: "$2b$10$SpERJQLhczlXWIGkUW4gO.C33h7qpySQQZMBgSPiHjyMJ5/JFM.dK",
+        __v: 6
+    },
+    {
+        _id: "5f23260052455b66ab79eb5a",
+        username: "testUser",
+        name: "Test User",
+        passwordHash: "$2b$10$NJQUHF1IvWzXU9BKEzFVQuc50WHKNdt8EDRjdY76r8jX2ptxEmbka",
+        __v: 0
+    }
+]
+
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
@@ -64,6 +88,7 @@ const usersInDb = async () => {
 
 module.exports = {
     initialBlogs,
+    initialUsers,
     blogsInDb,
     usersInDb
 }

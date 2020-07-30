@@ -3,8 +3,8 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const blog = require('../models/blog')
+const user = require('../models/user')
 const api = supertest(app)
-const jwt = require('jsonwebtoken')
 
 const Blog = require('../models/blog')
 const User = require('../models/user')
@@ -16,6 +16,15 @@ beforeEach(async () => {
             .map(blog => new Blog(blog))
         const promiseArray = blogObjects.map(blog => blog.save())
         await Promise.all(promiseArray)     
+})
+
+beforeEach(async () => {
+    await user.deleteMany({})
+        
+        const userObjects = helper.initialUsers
+            .map(user => new User(user))
+        const promiseArray = userObjects.map(user => user.save())
+        await Promise.all(promiseArray)
 })
 
 test('blogs are returned as json', async () => {
@@ -39,16 +48,11 @@ test('blogs are identified by "id" not "_id"', async () => {
     expect(ids).toBeDefined()
 })
 
-test('a new blog can be added only if there is a token', async () => {    
-    //const usersAtStart = await helper.usersInDb()
-    //const user = usersAtStart[0]
-
-    const user = new User({
+test('a new blog can be added only if there is a token', async () => {        
+    const user = {
         username: 'testUser',
-        password: 'testPassword'
-    })
-
-    //const user = await User.findOne({ username: 'redDog14' })
+        password: 'test'
+    }
 
     const response = await api
         .post('/api/login')
@@ -56,21 +60,19 @@ test('a new blog can be added only if there is a token', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-    console.log(response.body)
-    const token = response.map(r => r.token)
-    console.log(token)
+    const token = response.body.token
     
-    const newBlog = new Blog({
+    const newBlog = {
         title: 'Test Blog',
         author: 'Test Author',
         url: 'https://testsite.com/',
         likes: 1
-    })
+    }
 
     await api
         .post('/api/blogs')
         .send(newBlog)
-        .set('Authorization', `bearer ${response.token[0]}`)
+        .set('Authorization', `bearer ${token}`)
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
@@ -83,26 +85,20 @@ test('a new blog can be added only if there is a token', async () => {
     )
 })
 
-/*const userForToken = {
-        username: 'redDog14',
-        id: '5f1dc5f38912bb3bf9283aa1'
+test('new blog can be added only if it has a token', async () => {
+    const newBlog = {
+        title: 'Test Blog',
+        author: 'Test Author',
+        url: 'https://testsite.com/',
+        likes: 1
     }
 
-    const token = jwt.sign(userForToken, process.env.SECRET)
-
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!token || !decodedToken.id) {
-        return response.status(401).json({ error: 'token missing or invalid' })
-    }
-    console.log(decodedToken.id)
-
-    const users = await helper.usersInDb()
-    const users = await User.findById(decodedToken.id)
-    //console.log(user)*/
-
-/*test('new blog can be added only if it has a token', async () => {
-
-})*/
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+        .expect('Content-Type', /application\/json/)
+})
 
 test('if the likes property is missing, a default value of zero will be assigned', async () => {
     const blogsAtStart = await helper.blogsInDb()
@@ -113,6 +109,19 @@ test('if the likes property is missing, a default value of zero will be assigned
 })
 
 test('a new blog needs a title and url for it to be added to list', async () => {
+    const user = {
+        username: 'testUser',
+        password: 'test'
+    }
+
+    const response = await api
+        .post('/api/login')
+        .send(user)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const token = response.body.token
+
     const newBlog = {
         author: 'David Walsh'
     }
@@ -120,6 +129,7 @@ test('a new blog needs a title and url for it to be added to list', async () => 
     await api
         .post('/api/blogs')
         .send(newBlog)
+        .set('Authorization', `bearer ${token}`)
         .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -128,17 +138,45 @@ test('a new blog needs a title and url for it to be added to list', async () => 
 })
 
 test('if blog has valid id, it can be deleted, response will be status code 204', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+    const user = {
+        username: 'testUser',
+        password: 'test'
+    }
+
+    const response = await api
+        .post('/api/login')
+        .send(user)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const token = response.body.token
+   
+    const newBlog = {
+        title: 'Test Blog',
+        author: 'Test Author',
+        url: 'https://testsite.com/',
+        likes: 1
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .set('Authorization', `bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const blogs = await api.get('/api/blogs')
+    const blogToDelete = blogs.body[blogs.body.length - 1]  
 
     await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `bearer ${token}`)
         .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
     expect(blogsAtEnd).toHaveLength(
-        helper.initialBlogs.length - 1
+        helper.initialBlogs.length
     )
 
     const ids = blogsAtEnd.map(r => r.id)
