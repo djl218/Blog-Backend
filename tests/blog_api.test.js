@@ -4,8 +4,10 @@ const helper = require('./test_helper')
 const app = require('../app')
 const blog = require('../models/blog')
 const api = supertest(app)
+const jwt = require('jsonwebtoken')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
     await blog.deleteMany({})
@@ -37,16 +39,38 @@ test('blogs are identified by "id" not "_id"', async () => {
     expect(ids).toBeDefined()
 })
 
-test('a new blog can be added', async () => {
-    const newBlog = {
-        title: 'David Walsh Blog',
-        author: 'David Walsh',
-        url: 'https://davidwalsh.name/'
-    }
+test('a new blog can be added only if there is a token', async () => {    
+    //const usersAtStart = await helper.usersInDb()
+    //const user = usersAtStart[0]
+
+    const user = new User({
+        username: 'testUser',
+        password: 'testPassword'
+    })
+
+    //const user = await User.findOne({ username: 'redDog14' })
+
+    const response = await api
+        .post('/api/login')
+        .send(user)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    console.log(response.body)
+    const token = response.map(r => r.token)
+    console.log(token)
+    
+    const newBlog = new Blog({
+        title: 'Test Blog',
+        author: 'Test Author',
+        url: 'https://testsite.com/',
+        likes: 1
+    })
 
     await api
         .post('/api/blogs')
         .send(newBlog)
+        .set('Authorization', `bearer ${response.token[0]}`)
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
@@ -55,9 +79,30 @@ test('a new blog can be added', async () => {
 
     const title = blogsAtEnd.map(n => n.title)
     expect(title).toContain(
-        'David Walsh Blog'
+        'Test Blog'
     )
 })
+
+/*const userForToken = {
+        username: 'redDog14',
+        id: '5f1dc5f38912bb3bf9283aa1'
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!token || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' })
+    }
+    console.log(decodedToken.id)
+
+    const users = await helper.usersInDb()
+    const users = await User.findById(decodedToken.id)
+    //console.log(user)*/
+
+/*test('new blog can be added only if it has a token', async () => {
+
+})*/
 
 test('if the likes property is missing, a default value of zero will be assigned', async () => {
     const blogsAtStart = await helper.blogsInDb()
