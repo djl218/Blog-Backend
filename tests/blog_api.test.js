@@ -48,6 +48,34 @@ test('blogs are identified by "id" not "_id"', async () => {
     expect(ids).toBeDefined()
 })
 
+test('a new user cannot be added if username is less than 3', async () => {
+    const user = {
+        username: 'jk',
+        name: 'Fred',
+        password: 'passwordFred'
+    }
+
+    await api
+        .post('/api/users')
+        .send(user)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+})
+
+test('a new user cannot be created if password is less than 3', async () => {
+    const user = {
+        username: 'iAmFred',
+        name: 'Fred',
+        password: 'pa'
+    }
+
+    await api
+        .post('/api/users')
+        .send(user)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+})
+
 test('a new blog can be added only if there is a token', async () => {        
     const user = {
         username: 'testUser',
