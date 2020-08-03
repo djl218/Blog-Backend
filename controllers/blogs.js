@@ -47,7 +47,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     }
     
     const blog = await Blog
-    .findById(request.params.id).populate('user', { username: 1, name: 1 })
+    .findById(request.params.id)//.populate('user', { username: 1, name: 1 })
 
     if (decodedToken.id.toString() !== blog.user.toString()) {
         return response.status(404).json({ error: 'user is only able to delete blogs that they have added' })
@@ -61,7 +61,7 @@ blogsRouter.put('/:id', async (request, response) => {
     const body = request.body
 
     const blog = {
-        likes: body.likes,
+        likes: body.likes
     }
 
     await Blog
