@@ -6,8 +6,8 @@ const User = require('../models/user')
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 })
-    
-    response.json(blogs.map(blog => blog.toJSON()))
+
+    response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
@@ -47,7 +47,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     }
     
     const blog = await Blog
-    .findById(request.params.id)//.populate('user', { username: 1, name: 1 })
+    .findById(request.params.id)
 
     if (decodedToken.id.toString() !== blog.user.toString()) {
         return response.status(404).json({ error: 'user is only able to delete blogs that they have added' })
@@ -62,13 +62,27 @@ blogsRouter.put('/:id', async (request, response) => {
 
     const likedBlog = {
         id: body.id,
-        likes: body.likes,
+        likes: body.likes
     }
 
     await Blog
     .findByIdAndUpdate(request.params.id, likedBlog, { id: body.id, likes: body.likes })
     .populate('user', { username: 1, name: 1 })
     response.status(200).json(likedBlog)
+})
+
+blogsRouter.put('/:id/comments', async (request, response) => {
+    const body = request.body
+
+    const blogWithComment = {
+        blogId: body.blogId,
+        userComments: body.userComments
+    }
+
+    await Blog
+    .findByIdAndUpdate(request.params.id, blogWithComment, { blogId: body.blogId, userComments: body.userComments })
+    .populate('user', { username: 1, name: 1 })
+    response.status(200).json(blogWithComment)
 })
 
 module.exports = blogsRouter
