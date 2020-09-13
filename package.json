@@ -1,7 +1,7 @@
 {
   "name": "blog-backend",
   "version": "1.0.0",
-  "description": "Backend for the blog-list app for the FullStack Open from the University of Helsinki.",
+  "description": "Backend for the blog list app for the FullStack Open from the University of Helsinki.",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
