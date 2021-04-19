@@ -1,11 +1,4 @@
 # Blog-Backend
-Backend for the blog list app.
-
-Link to the blog list app:<br>
-https://warm-crag-63925.herokuapp.com/
-
-The frontend can be found here:<br>
-https://github.com/djl218/bloglist-frontend
 
 This project builds upon the same concepts that I used when building the Phonebook App, but introduces more complexity.
 
@@ -19,3 +12,7 @@ Some notable features of the application are:
   *  new posts display the user that added them
   *  posts can only be deleted by user that added them
   *  users can comment on posts
+
+[<h3>See the app</h3>](https://warm-crag-63925.herokuapp.com/)
+
+[<h3>Frontend code</h3>](https://github.com/djl218/bloglist-frontend)
