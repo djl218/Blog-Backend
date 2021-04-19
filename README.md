@@ -1,4 +1,4 @@
-# Blog-Backend
+# Bloglist Backend
 
 This project builds upon the same concepts that I used when building the [Phonebook App](https://github.com/djl218/Phonebook-Backend), but introduces more complexity.
 
