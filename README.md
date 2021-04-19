@@ -1,6 +1,6 @@
 # Blog-Backend
 
-This project builds upon the same concepts that I used when building the Phonebook App, but introduces more complexity.
+This project builds upon the same concepts that I used when building the [Phonebook App](https://github.com/djl218/Phonebook-Backend), but introduces more complexity.
 
 The React frontend uses Redux for State Management. It has five reducers which are then combined and put in store. The frontend also uses React Router to create a dynamically-rendering Single Page Application. There is also unit testing that is done with Jest. End-to-end testing was performed with Cypress. The styling is done using styled-components.
 
