@@ -19,6 +19,13 @@ const userSchema = new mongoose.Schema({
             ref: 'Blog'
         }
     ],
+    bookmarks: [
+        {
+            blogId: String,
+            title: String,
+            author: String
+        }
+    ]
 })
 
 userSchema.set('toJSON', {

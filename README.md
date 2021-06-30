@@ -14,6 +14,7 @@ Some notable features of the application are:
   *  new posts display the user that added them
   *  posts can only be deleted by user that added them
   *  users can comment on posts
+  *  users can bookmark posts
 
 [<h3>See the app</h3>](https://warm-crag-63925.herokuapp.com/)
 

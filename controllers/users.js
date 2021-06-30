@@ -9,6 +9,13 @@ usersRouter.get('/', async (request, response) => {
     response.json(users)
 })
 
+usersRouter.get('/:id', async (request, response) => {
+    const user = await User
+    .findById(request.params.id)
+
+    response.json(user)
+})
+
 usersRouter.post('/', async (request, response) => {
     const body = request.body
     if (body.password.length < 3) {
@@ -30,6 +37,21 @@ usersRouter.post('/', async (request, response) => {
     const savedUser = await user.save()
 
     response.json(savedUser)
+})
+
+usersRouter.put('/:id', async (request, response) => {
+    const body = request.body
+    const updatedBookmarks = {
+        userId: body.id,
+        bookmarks: body.bookmarks
+    }
+
+    await User
+    .findByIdAndUpdate(request.params.id, updatedBookmarks,
+        { userId: body.userId, bookmarks: body.bookmarks }
+    )
+    .populate('bookmarks', { title: 1, author: 1 })
+    response.status(200).json(updatedBookmarks)
 })
 
 module.exports = usersRouter
