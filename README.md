@@ -16,6 +16,4 @@ Some notable features of the application are:
   *  users can comment on posts
   *  users can bookmark posts
 
-[<h3>See the app</h3>](https://warm-crag-63925.herokuapp.com/)
-
-[<h3>Frontend code</h3>](https://github.com/djl218/bloglist-frontend)
+[link for bloglist app frontend](https://github.com/djl218/bloglist-frontend/tree/master)
